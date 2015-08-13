@@ -104,13 +104,14 @@ public class PlaceDetails: Printable {
 @objc public protocol GooglePlacesAutocompleteDelegate {
   optional func placesFound(places: [Place])
   optional func placeSelected(place: Place)
-  optional func placeViewClosed()
+  optional func placeViewClosed(text: String)
 }
 
 // MARK: - GooglePlacesAutocomplete
 public class GooglePlacesAutocomplete: UINavigationController {
   public var gpaViewController: GooglePlacesAutocompleteContainer!
   public var closeButton: UIBarButtonItem!
+  public var doneButton: UIBarButtonItem!
 
   // Proxy access to container navigationItem
   public override var navigationItem: UINavigationItem {
@@ -139,12 +140,21 @@ public class GooglePlacesAutocomplete: UINavigationController {
     closeButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: "close")
     closeButton.style = UIBarButtonItemStyle.Done
 
+    doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "done")
+    doneButton.style = UIBarButtonItemStyle.Done
+
     gpaViewController.navigationItem.leftBarButtonItem = closeButton
+    gpaViewController.navigationItem.rightBarButtonItem = doneButton
+
     gpaViewController.navigationItem.title = "Enter Address"
   }
 
   func close() {
-    placeDelegate?.placeViewClosed?()
+    placeDelegate?.placeViewClosed?("")
+  }
+
+  func done() {
+    placeDelegate?.placeViewClosed?(gpaViewController.searchBar.text)
   }
 
   public func reset() {
