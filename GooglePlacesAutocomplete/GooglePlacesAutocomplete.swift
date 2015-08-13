@@ -12,13 +12,13 @@ public struct LocationBias {
   public let latitude: Double
   public let longitude: Double
   public let radius: Int
-  
+
   public init(latitude: Double = 0, longitude: Double = 0, radius: Int = 20000000) {
     self.latitude = latitude
     self.longitude = longitude
     self.radius = radius
   }
-  
+
   public var location: String {
     return "\(latitude),\(longitude)"
   }
@@ -69,9 +69,9 @@ public class Place: NSObject {
 
   /**
     Call Google Place Details API to get detailed information for this place
-  
+
     Requires that Place#apiKey be set
-  
+
     :param: result Callback on successful completion with detailed place information
   */
   public func getDetails(result: PlaceDetails -> ()) {
@@ -104,7 +104,7 @@ public class PlaceDetails: Printable {
 @objc public protocol GooglePlacesAutocompleteDelegate {
   optional func placesFound(places: [Place])
   optional func placeSelected(place: Place)
-  optional func placeViewClosed(text: String)
+  optional func placeViewClosed(text: String?)
 }
 
 // MARK: - GooglePlacesAutocomplete
@@ -122,7 +122,7 @@ public class GooglePlacesAutocomplete: UINavigationController {
     get { return gpaViewController.delegate }
     set { gpaViewController.delegate = newValue }
   }
-  
+
   public var locationBias: LocationBias? {
     get { return gpaViewController.locationBias }
     set { gpaViewController.locationBias = newValue }
@@ -150,7 +150,7 @@ public class GooglePlacesAutocomplete: UINavigationController {
   }
 
   func close() {
-    placeDelegate?.placeViewClosed?("")
+    placeDelegate?.placeViewClosed?(nil)
   }
 
   func done() {
@@ -235,7 +235,7 @@ extension GooglePlacesAutocompleteContainer: UITableViewDataSource, UITableViewD
     // Configure the cell
     cell.textLabel!.text = place.description
     cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
-    
+
     return cell
   }
 
@@ -266,12 +266,12 @@ extension GooglePlacesAutocompleteContainer: UISearchBarDelegate {
       "types": placeType.description,
       "key": apiKey ?? ""
     ]
-    
+
     if let bias = locationBias {
       params["location"] = bias.location
       params["radius"] = bias.radius.description
     }
-    
+
     GooglePlacesRequestHelpers.doRequest(
       "https://maps.googleapis.com/maps/api/place/autocomplete/json",
       params: params
