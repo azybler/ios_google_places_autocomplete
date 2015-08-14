@@ -128,6 +128,11 @@ public class GooglePlacesAutocomplete: UINavigationController {
     set { gpaViewController.locationBias = newValue }
   }
 
+  public var countryCode: String? {
+    get { return gpaViewController.countryCode }
+    set { gpaViewController.countryCode = newValue }
+  }
+
   public convenience init(apiKey: String, placeType: PlaceType = .All) {
     let gpaViewController = GooglePlacesAutocompleteContainer(
       apiKey: apiKey,
@@ -174,6 +179,7 @@ public class GooglePlacesAutocompleteContainer: UIViewController {
   var places = [Place]()
   var placeType: PlaceType = .All
   var locationBias: LocationBias?
+  var countryCode: String?
 
   convenience init(apiKey: String, placeType: PlaceType = .All) {
     let bundle = NSBundle(forClass: GooglePlacesAutocompleteContainer.self)
@@ -270,6 +276,10 @@ extension GooglePlacesAutocompleteContainer: UISearchBarDelegate {
     if let bias = locationBias {
       params["location"] = bias.location
       params["radius"] = bias.radius.description
+    }
+
+    if let country = countryCode {
+      params["components"] = "country:" + country
     }
 
     GooglePlacesRequestHelpers.doRequest(
