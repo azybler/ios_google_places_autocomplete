@@ -92,10 +92,10 @@ From Google's documentation: "you can request more details about a particular es
 
 ```swift
 place.getDetails { details in
-  println(details.name)       // Convenience accessor for name
-  println(details.latitude)   // Convenience accessor for latitude
-  println(details.longitude)  // Convenience accessor for longitude
-  println(details.raw)        // Complete JSON data (see below)
+  print(details.name)       // Convenience accessor for name
+  print(details.latitude)   // Convenience accessor for latitude
+  print(details.longitude)  // Convenience accessor for longitude
+  print(details.raw)        // Complete JSON data (see below)
 }
 
 /*
